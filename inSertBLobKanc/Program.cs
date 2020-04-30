@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Oracle.ManagedDataAccess.Client;
+using System;
 using System.Data;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Oracle.ManagedDataAccess.Client;
-using Oracle.ManagedDataAccess.Types;
 
 namespace inSertBLobKanc
 {
@@ -18,7 +13,10 @@ namespace inSertBLobKanc
             using (OracleConnection ora = new OracleConnection(@"Data Source = 172.23.33.6:1521/orcl; Persist Security Info = True;User ID=l000422;Password=vfrfhtyrj1984;"))
             {
                 ora.Open();
-                OracleCommand cmd = new OracleCommand("select A.T_FILENAME, A.n_Selfs$,a.n_self$ from IRA.T#DOC#OFFICE O inner join IRA.T#DOC#OFFICE_APPENDIX A on (A.n_Owners$, A.n_Owner$) = ((O.N_SELFS$, O.n_Self$)) WHERE O.D_BEGIN$ >= trunc(sysdate - 1) and O.d_End$ is null and A.d_End$ is null and A.T_USER$ = 'A999999'", ora);
+                OracleCommand cmd = new OracleCommand("select A.T_FILENAME, A.n_Selfs$,a.n_self$ from IRA.T#DOC#OFFICE O " +
+                    "inner join IRA.T#DOC#OFFICE_APPENDIX A on (A.n_Owners$, A.n_Owner$) = ((O.N_SELFS$, O.n_Self$)) " +
+                    "WHERE O.D_BEGIN$ >= trunc(sysdate - 1) " +
+                    "and O.d_End$ is null and A.d_End$ is null and A.T_USER$ = 'A999999'", ora);
                 OracleDataAdapter da = new OracleDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
@@ -26,7 +24,7 @@ namespace inSertBLobKanc
                 for (var i = 0; i < dt.Rows.Count; i++) 
                 {
                     FileStream fs = new FileStream(dt.Rows[i][0].ToString(), FileMode.Open, FileAccess.Read);
-                    string nFile = System.IO.Path.GetFileName(dt.Rows[i][0].ToString());
+                    string nFile = Path.GetFileName(dt.Rows[i][0].ToString());
                     BinaryReader rd = new BinaryReader(fs);
                     int streamLength = (int)fs.Length;
 
@@ -42,9 +40,6 @@ namespace inSertBLobKanc
                     commando.Parameters.Add("PFILENAME", OracleDbType.Varchar2).Value = nFile;
                     commando.ExecuteNonQuery();
 
-
-                  //  Console.WriteLine(dt.Rows[i][0] +" "+ dt.Rows[i][1] + " " + dt.Rows[i][2]);
-                  //  Console.ReadKey();
                 }
             }
             
