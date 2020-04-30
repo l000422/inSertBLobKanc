@@ -23,10 +23,10 @@ namespace inSertBLobKanc
                 DataTable dt = new DataTable();
                 da.Fill(dt);
                 
-                for (var i = 0; i < 2;  i++) dt.Rows.Count;
+                for (var i = 0; i < dt.Rows.Count; i++) 
                 {
-                    // StreamReader stR = new StreamReader(dt.Rows[i][0].ToString(),Encoding.Default,true);
-                    FileStream fs = new FileStream(@"D:\N067-15.pdf", FileMode.Open, FileAccess.Read);
+                    FileStream fs = new FileStream(dt.Rows[i][0].ToString(), FileMode.Open, FileAccess.Read);
+                    string nFile = System.IO.Path.GetFileName(dt.Rows[i][0].ToString());
                     BinaryReader rd = new BinaryReader(fs);
                     int streamLength = (int)fs.Length;
 
@@ -34,21 +34,17 @@ namespace inSertBLobKanc
                     OracleCommand commando = new OracleCommand("IRA.PK#DOC#FILE#INSERT_OFFICE.P#INSERT_BLOB", ora)
                     {
                         CommandType = CommandType.StoredProcedure
-                    };
-                    
-                    Int32 owns = Convert.ToInt32(dt.Rows[i][1]);
-                    Int32 ownr = Convert.ToInt32(dt.Rows[i][2]);
-                    string filen = dt.Rows[i][0].ToString();
+                    };               
 
-                    commando.Parameters.Add("PN_SELFS", OracleDbType.Int32).Value = owns;
-                    commando.Parameters.Add("PN_SELF", OracleDbType.Int32).Value = ownr;
+                    commando.Parameters.Add("PN_SELFS", OracleDbType.Int32).Value = Convert.ToInt32(dt.Rows[i][1]); ;
+                    commando.Parameters.Add("PN_SELF", OracleDbType.Int32).Value = Convert.ToInt32(dt.Rows[i][2]); ;
                     commando.Parameters.Add("PBLOB_IN", OracleDbType.Blob).Value = rd.ReadBytes(streamLength);
-                    commando.Parameters.Add("PFILENAME", OracleDbType.Varchar2).Value =filen;
+                    commando.Parameters.Add("PFILENAME", OracleDbType.Varchar2).Value = nFile;
                     commando.ExecuteNonQuery();
 
 
-                    Console.WriteLine(dt.Rows[i][0] +" "+ dt.Rows[i][1] + " " + dt.Rows[i][2]);
-                    Console.ReadKey();
+                  //  Console.WriteLine(dt.Rows[i][0] +" "+ dt.Rows[i][1] + " " + dt.Rows[i][2]);
+                  //  Console.ReadKey();
                 }
             }
             
