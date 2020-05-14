@@ -20,12 +20,10 @@ namespace inSertBLobKanc
                 OracleDataAdapter da = new OracleDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
-                
+                string pathServer = @"\\WIN-LGC-SERVER\INFO\";
                 for (var i = 0; i < dt.Rows.Count; i++) 
                 {
-                    string HX = @"\\WIN-LGC-SERVER\INFO" + dt.Rows[i][0].ToString();
-                    string qqqq = dt.Rows[i][0].ToString();
-                    FileStream fs = new FileStream(HX, FileMode.Open, FileAccess.Read);
+                    FileStream fs = new FileStream(pathServer + dt.Rows[i][0].ToString(), FileMode.Open, FileAccess.Read);
                     string nFile = Path.GetFileName(dt.Rows[i][0].ToString());
                     BinaryReader rd = new BinaryReader(fs);
                     int streamLength = (int)fs.Length;
